@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1430" />
+  <meta name="description" content="Mendelian Fighter - game edukasi Biologi SMA tentang Hukum Mendel." />
+  <title>Mendelian Fighter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Nunito:wght@400;600;800&family=Comic+Neue:wght@700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <!-- Latar: fallback CSS (awan) -> video. Ganti aset di public/assets/video/ -->
+    <div id="bg" aria-hidden="true">
+      <div id="bg-fallback"><i class="fc c1"></i><i class="fc c2"></i><i class="fc c3"></i></div>
+      <video id="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/video/login-poster.jpg">
+        <source src="assets/video/login-bg.mp4" type="video/mp4" />
+      </video>
+      <div id="bg-overlay"></div>
+    </div>
+
+    <div id="game"></div>
+
+    <main id="ui">
+      <section id="screen-login" class="screen" aria-labelledby="game-title">
+        <header class="hero">
+          <h1 id="game-title" class="title"><span>MENDELIAN</span><span>FIGHTER</span></h1>
+          <p class="tagline">“Restore the Laws of Life”</p>
+        </header>
+        <form id="login-form" class="panel" novalidate autocomplete="off">
+          <h2 class="panel-title">ENTER THE WORLD OF MENDELIAN</h2>
+          <p class="panel-desc">Petualanganmu untuk memulihkan hukum kehidupan dimulai di sini.</p>
+          <label for="player-name">Masukkan Nama Petualang</label>
+          <input id="player-name" name="player-name" type="text" placeholder="Nama siswa..." maxlength="40"
+                 autocomplete="off" spellcheck="false" aria-describedby="name-error" />
+          <p id="name-error" class="error" role="alert"></p>
+          <button type="submit" class="btn btn-gold"><span>MULAI PETUALANGAN</span></button>
+        </form>
+      </section>
+
+      <section id="screen-select" class="screen" hidden aria-labelledby="select-title">
+        <header class="select-head">
+          <h2 id="select-title">PILIH PAHLAWANMU</h2>
+          <p>Dua petualang dari Kalimantan Tengah, satu takdir untuk menyelamatkan Mendelian.</p>
+          <p id="select-name" class="adventurer"></p>
+        </header>
+        <div id="char-list" class="char-list" role="radiogroup" aria-label="Pilih karakter"></div>
+        <div class="select-actions">
+          <button id="back-btn" type="button" class="btn btn-ghost">← Ubah Nama</button>
+          <button id="enter-btn" type="button" class="btn btn-gold" disabled><span>MASUK KE DUNIA MENDELIAN</span></button>
+        </div>
+      </section>
+    </main>
+
+    <div id="cutscene" hidden role="dialog" aria-modal="true" aria-label="Adegan ultimate">
+      <video id="cutscene-video" playsinline preload="auto"></video>
+      <button id="cutscene-skip" type="button" class="btn btn-ghost">LEWATI ▸▸</button>
+    </div>
+
+    <section id="npc-ui" hidden aria-label="Percakapan NPC">
+      <div id="npc-bubble" class="npc-bubble" role="dialog" aria-labelledby="npc-name">
+        <div class="npc-tag"><b id="npc-name"></b><small id="npc-role"></small></div>
+        <div class="npc-body">
+          <p id="npc-ghost" class="npc-text npc-ghost" aria-hidden="true"></p>
+          <p id="npc-text" class="npc-text" aria-hidden="true"></p>
+        </div>
+        <p id="npc-sr" class="sr-only" role="status"></p>
+        <div class="npc-actions">
+          <button id="npc-ok" type="button" class="btn btn-gold" disabled><span>PAHAM ✓</span></button>
+          <button id="npc-redo" type="button" class="btn btn-ghost" disabled>↻ ULANGI MATERI</button>
+        </div>
+      </div>
+    </section>
+    <button id="act-btn" type="button" class="act-btn" hidden><kbd>E</kbd><span class="act-label">BICARA</span></button>
+
+    <section id="battle-ui" hidden aria-label="Pertarungan">
+      <div class="b-hud">
+        <div class="b-side"><div class="b-name" id="bp-name"></div><div class="b-bar"><i id="bp-hp"></i></div><div class="b-hp" id="bp-txt"></div></div>
+        <div class="b-streak" id="b-streak" role="img" aria-label="Combo jawaban benar"><b></b><b></b><b></b><small>ULTIMATE</small></div>
+        <div class="b-side b-enemy"><div class="b-name" id="be-name"></div><div class="b-bar"><i id="be-hp"></i></div><div class="b-hp" id="be-txt"></div></div>
+      </div>
+      <div class="b-buffs" id="b-buffs" aria-live="polite"></div>
+      <div class="b-announce" id="b-announce" aria-live="polite"></div>
+      <div class="b-panel" id="b-panel" hidden>
+        <div class="b-items" id="b-items" role="group" aria-label="Item (1 per giliran)"></div>
+        <div class="b-meta"><span id="bq-type" class="chip"></span><span id="bq-turn"></span><span id="bq-num"></span></div>
+        <p id="bq-text" class="b-q"></p>
+        <div id="bq-options" class="b-options" role="group" aria-label="Pilihan jawaban"></div>
+        <p id="bq-feedback" class="b-feedback" role="status"></p>
+      </div>
+      <div class="b-result" id="b-result" hidden role="dialog" aria-modal="true" aria-labelledby="br-title">
+        <div class="b-card"><h2 id="br-title"></h2><p id="br-text"></p><button id="br-btn" type="button" class="btn btn-gold"><span></span></button></div>
+      </div>
+    </section>
+
+    <div id="audio-ctl">
+      <button id="mute-btn" type="button" aria-pressed="false" aria-label="Matikan suara">🔊</button>
+      <input id="vol" type="range" min="0" max="1" step="0.05" value="0.7" aria-label="Volume" />
+    </div>
+    <noscript><p style="color:#fff;padding:2rem">Game ini membutuhkan JavaScript.</p></noscript>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
